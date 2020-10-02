@@ -1,6 +1,16 @@
 ---
-title: "R Notebook"
-output: html_notebook
+title: 'Studiekrav: Reproduserbarhet'
+output:
+  html_document:
+    df_print: paged
+    toc: true
+  pdf_document:
+    toc: true 
+  word_document:
+    toc: true 
+lang: nb-NO
+bibliography: 
+csl: apa-no-ampersand.csl
 ---
 
 Her er arbeidskrav 2.
