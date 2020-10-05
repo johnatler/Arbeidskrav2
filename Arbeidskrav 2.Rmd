@@ -1,19 +1,38 @@
 ---
 title: "R Notebook"
 output: html_notebook
----kj j
+---
 
 This is an [R Markdown](http://rmarkdown.rstudio.com) Notebook. When you execute code within the notebook, the results appear beneath the code. 
 
 Try executing this chunk by clicking the *Run* button within the chunk or by placing your cursor inside it and pressing *Cmd+Shift+Enter*. 
 
 ```{r}
+library(ggplot2)
 plot(cars)
 ```
 
 ## Innledning
 
 I denne oppgaven skal vi ta for oss et datasett og tolke dataene for å finne ut om høyde er med på å bestemme fremtidig inntekt. For å finne frem til om denne antakelsen er korrekt eller ikke, skal vi konkludere ved å tolke dataene ut ifra ulike plot.
+
+## Plot
+
+```{r echo=TRUE}
+ggplot(data=modelr::heights, mapping =aes(x = height, y = income))+
+geom_point()
+```
+
+
+```{r}
+heightsPosInc <-subset(heights, income>0)
+ggplot(heightsPosInc, mapping =aes(x = heightInt, y = income))+
+scale_y_continuous(trans = scales::log_trans())+
+geom_boxplot()
+```
+
+
+
 
 Add a new chunk by clicking the *Insert Chunk* button on the toolbar or by pressing *Cmd+Option+I*.
 
