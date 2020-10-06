@@ -28,14 +28,13 @@ knitr::kable(summary(heights[,1:4]))
 knitr::kable(summary(heights[,5:9]))
 
 ```
-<<<<<<< HEAD
+
 
 # Analyse og plots
 
 
 ```{r}
-=======
-# Plot 
+
 ```{r echo=TRUE}
 >>>>>>> 9cddc2b1648c5ebf4a96dd3ca51b7ad860b50eb8
 install.packages("ggplot2")
