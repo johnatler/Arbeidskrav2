@@ -14,5 +14,13 @@ csl: apa-no-ampersand.csl
 ---
 
 Her er arbeidskrav 2.
+ff
 
+```{r}
+heightsPosInc <-subset(heights, income>0)
+
+ggplot(heightsPosInc, mapping =aes(x = heightInt, y = income))+
+scale_y_continuous(trans = scales::log_trans())+
+geom_boxplot()
+```
 
