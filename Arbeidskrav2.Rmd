@@ -12,7 +12,7 @@ lang: nb-NO
 bibliography: 
 csl: apa-no-ampersand.csl
 ---
-
+ 
 
 # Innledning
 
