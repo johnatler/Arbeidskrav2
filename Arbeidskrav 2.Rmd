@@ -7,6 +7,7 @@ This is an [R Markdown](http://rmarkdown.rstudio.com) Notebook. When you execute
 
 Try executing this chunk by clicking the *Run* button within the chunk or by placing your cursor inside it and pressing *Cmd+Shift+Enter*. 
 
+
 ```{r}
 library(ggplot2)
 plot(cars)
@@ -18,17 +19,31 @@ I denne oppgaven skal vi ta for oss et datasett og tolke dataene for å finne ut
 
 ## Plot
 
-```{r echo=TRUE}
-ggplot(data=modelr::heights, mapping =aes(x = height, y = income))+
+
+```{r}
+ggplot(heights, mapping =aes(x = height, y = income))+
 geom_point()
 ```
 
 
 ```{r}
+library(heightsPosInc)
+histogram(~income | type = "height", data = heightsPosInc)
+```
+
+```{r}
 heightsPosInc <-subset(heights, income>0)
-ggplot(heightsPosInc, mapping =aes(x = heightInt, y = income))+
-scale_y_continuous(trans = scales::log_trans())+
+ggplot(heightsPosInc, mapping =aes(x = heightInt, y = income)) +
+scale_y_continuous(trans = scales::log_trans()) +
 geom_boxplot()
+```
+
+```{r}
+heightsPosInc <-subset(heights, income>0)
+ggplot(heightsPosInc, mapping =aes(x = height, y = income))+
+scale_y_continuous(trans = scales::log_trans())+
+geom_point(position = "jitter")+
+geom_smooth(method = ’lm’)
 ```
 
 
