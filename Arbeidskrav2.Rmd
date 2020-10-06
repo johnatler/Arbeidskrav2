@@ -24,8 +24,9 @@ library(modelr)
 x <- modelr::heights
 attach(x)
 heights$heightInt <- cut(heights$height, breaks = 8)
-knitr::kable(summary(heights[,1:4]))
+knitr::kable(summary(heights[,4:9]))
 knitr::kable(summary(heights[,5:9]))
+knitr::kable(summary(heights[,2]))
 
 ```
 
