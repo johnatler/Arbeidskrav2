@@ -13,6 +13,11 @@ bibliography:
 csl: apa-no-ampersand.csl
 ---
 
+
+# Innledning
+
+# Statistikk
+
 ```{r}
 library(modelr)
 ?modelr::heights
@@ -23,7 +28,10 @@ knitr::kable(summary(heights[,1:4]))
 knitr::kable(summary(heights[,5:9]))
 
 ```
-# Plot 
+
+# Analyse og plots
+
+
 ```{r}
 install.packages("ggplot2")
 library("ggplot2")
@@ -49,6 +57,9 @@ summary(lm(income~height, data = heights))
 
 ```
 
+# Våre funn vs tidligere forskning
+
+# Konklusjon
 
 Her er arbeidskrav 2. 
 
