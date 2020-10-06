@@ -34,28 +34,36 @@ knitr::kable(summary(heights[,5:9]))
 
 
 ```{r echo=TRUE}
-install.packages("ggplot2")
+#install.packages("ggplot2")
 library("ggplot2")
 ggplot(heights, mapping = aes(x = height, y = income))+geom_point()
 
+```
+
+```{r}
 heightsPosInc <- subset(heights, income>0)
 ggplot(heightsPosInc, mapping = aes(x = heightInt, y = income)) +
   scale_y_continuous(trans = scales::log_trans()) +
   geom_boxplot()
+```
 
+```{r}
 heightsPosInc <- subset(heights, income>0)
 ggplot(heightsPosInc, mapping = aes(x = height, y = income)) +
   scale_y_continuous(trans = scales::log_trans()) +
   geom_point(position = "jitter") +
   geom_smooth(method = "lm")
+```
 
+```{r}
 heightsPosInc <- subset(heights, income>0)
 ggplot(heightsPosInc, mapping = aes(x = height, y = income)) + 
   geom_point(position = "jitter") +
   geom_smooth(method = "lm")
+```
 
+```{r}
 summary(lm(income~height, data = heights))
-
 ```
 
 # Våre funn vs tidligere forskning
