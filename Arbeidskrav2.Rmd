@@ -14,7 +14,10 @@ csl: apa-no-ampersand.csl
 ---
 
 Her er arbeidskrav 2.
-ff
+
+## Innledning
+
+I denne oppgaven skal vi ta for oss et datasett og tolke dataene for å finne ut om høyde er med på å bestemme fremtidig inntekt. For å finne frem til om denne antakelsen er korrekt eller ikke, skal vi konkludere ved å tolke dataene ut ifra ulike plot.
 
 ```{r}
 heightsPosInc <-subset(heights, income>0)
