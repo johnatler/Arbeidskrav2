@@ -12,7 +12,7 @@ lang: nb-NO
 bibliography: 
 csl: apa-no-ampersand.csl
 ---
- 
+
 
 # Innledning
 
@@ -39,19 +39,48 @@ Ved hjelp av denne datakoden får vi opp den deskriptive statistikken for høyde
 ```{r}
 knitr::kable(summary(heights[2:4]))
 ```
-Ved å legge til "2:4" får vi opp den deskriptive statistikken for variabel 2 til 4, det vil si både høyde, vekt og alder. Ut ifra tallene for alder ser vi at de som er inkludert i dette datasette er personer mellom 47 og 56 år og gjennomsnittet for disse er 51,33 år.
+Ved å legge til "2:4" får vi opp den deskriptive statistikken for variabel 2 til 4, det vil si både høyde, vekt og alder. Ut ifra tallene for alder ser vi at de som er inkludert i dette datasettet er personer mellom 47 og 56 år og gjennomsnittet for disse er 51,33 år.
 
 # Analyse og plots
 
+I oppgave 1 skal vi foreta èn variabel analyse. Da har vi valgt å kikke på variablene høyde og inntekt hver for seg på grunn av dette var mest relevant for oppgaven. For disse 2 variablene skal vi lage et histogram, et density plot og et boxplot for å se om observasjonene er normalfordelte eller ikke.
+
 ```{r}
-ggplot(data = heights)+
-geom_histogram(aes(x=height))
+
+hist(heights$height)
+hist(heights$height, main = "Histogram høyde", xlab = "inches", ylab = "antall")
+```
+
+Ved å lage et histogram av høyde ser vi at observasjonene her er normalfordelte.
+
+heights$NOK <- income * 10
+
+heights$cm <- height * 2,54
+
+```{r}
+hist(heights$NOK)
+hist(heights$NOK, main = "Histogram Inntekt", xlab = "Nok", ylab = "antall")
 ```
 
 
+
 ```{r}
-ggplot(data = heights+
-geom_density(aes(x=height), fill="grey50")
+
+d <- density(heights$income)
+plot(d)
+density(heights$income), main = "Density plot Inntekt", xlab = "NOK", ylab = "antall")
+```
+```{r}
+d <- density(heights$height)
+plot(d)
+main
+```
+
+
+
+```{r}
+ggplot(heights)+
+geom_boxplot(height)
 ```
 
 
