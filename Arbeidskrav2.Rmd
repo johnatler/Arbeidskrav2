@@ -62,6 +62,12 @@ hist(heights$NOK)
 hist(heights$NOK, main = "Histogram Inntekt", xlab = "Nok", ylab = "antall")
 ```
 
+Det er motsatt tilfelle for histogram for inntekt. Her er fordelingen ikke normalfordelt og i dette tilfellet vil vi forsøke å gjennomføre en transformasjon. 
+
+```{r}
+hist(heights$NOK)
+hist(log(heights$NOK, main = "Histogram Inntekt", xlab = "Nok", ylab = "antall"))
+```
 
 
 ```{r}
