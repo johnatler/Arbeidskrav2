@@ -12,6 +12,12 @@ lang: nb-NO
 bibliography: 
 csl: apa-no-ampersand.csl
 ---
+```{r}
+options(scipen = 999)
+
+```
+
+
 
 
 # Innledning
@@ -46,7 +52,7 @@ Ved å legge til "2:4" får vi opp den deskriptive statistikken for variabel 2 t
 I oppgave 1 skal vi foreta èn variabel analyse. Da har vi valgt å kikke på variablene høyde og inntekt hver for seg på grunn av dette var mest relevant for oppgaven. For disse 2 variablene skal vi lage et histogram, et density plot og et boxplot for å se om observasjonene er normalfordelte eller ikke.
 
 ```{r}
-hist(heightsPosInc$height, main = "Histogram høyde", xlab = "inches", ylab = "antall")
+hist(heightsPosInc$height, main = "Histogram høyde", xlab = "inches", ylab = "antall", col = "darkseagreen4")
 ```
 
 Ved å lage et histogram av høyde ser vi at observasjonene her er normalfordelte.
@@ -56,68 +62,55 @@ heights$NOK <- income * 10
 heights$cm <- height * 2,54
 
 ```{r}
-hist(heightsPosInc$NOK, main = "Histogram Inntekt", xlab = "NOK", ylab = "antall")
+hist(heightsPosInc$NOK, main = "Histogram Inntekt", xlab = "NOK", ylab = "antall", col = "darkseagreen4")
 ```
 
 Det er motsatt tilfelle for histogram for inntekt. Her er fordelingen ikke normalfordelt og i dette tilfellet vil vi forsøke å gjennomføre en transformasjon. 
 
 ```{r}
 heightsPosInc$logincome <- log(heightsPosInc$income)
-hist(heightsPosInc$logincome, main = "Histogram Inntekt", xlab = "Log Income", ylab = "Antall")
+hist(heightsPosInc$logincome, main = "Histogram transformert inntekt (log inntekt)", xlab = "Log Income", ylab = "Antall")
 ```
 I eksempelet ovenfor har vi tatt en transformasjon og grafen er nå blitt tilnærmet normalfordelt, men ytterst til høyre har vi en outlayer.
 
 ```{r}
-
-d <- density(heights$income)
-plot(d)
-density(heightsPosInc$income), main = "Density plot Inntekt", xlab = "NOK", ylab = "antall")
+plot(density(heightsPosInc$height), main = "Density plot høyde", xlab = "NOK", ylab = "andel")
 ```
-I likhet med histogram for inntekt så gir også density plot for inntekt et bilde av grafen ikke er normalfordelt. Vi vurderer også i dette tilfellet slik at en transformasjon er på plass.
+I likhet med histogram for høyde så gir også density plot for høyde et bilde av at grafen er normalfordelt. Det vil si at flesteparten av observasjonene er sentrert rundt 65-70 inches.
 
 ```{r}
-d <- density(heights$income)
-plot(d)
+plot(density(heightsPosInc$income), main = "Density plot inntekt", xlab = "inntekt", ylab = "Andel", col = "green4")
 ```
 
+I likhet med histogram for inntekt så gir også density plot for inntekt et bilde av grafen ikke er normalfordelt. Vi vurderer også i dette tilfellet slik at en transformasjon er på plass.
+
+logincome
+
+```{r}
+plot(density(heightsPosInc$logincome), main = "Density plot transformert inntekt (log inntekt)", xlab = "loginntekt", ylab = "Andel", col = "green4")
 
 ```
+I eksempelet ovenfor har vi tatt en transformasjon og grafen er nå blitt tilnærmet normalfordelt, men ytterst til høyre har vi en outlayer.
 
-{r}
-d <- density(heights$height)
-plot(d)
-main
-```
-
+height_om <- subset(heights, income <1000000)
 
 ```{r}
 heightsPosInc <-subset(heights, income>0)
-ggplot(heightsPosInc, mapping =aes(x = heightInt, y = income))+
+ggplot(heightsPosInc, mapping =aes(x = heightInt, y = income, fill= heightInt))+
 scale_y_continuous(trans = scales::log_trans())+
-geom_boxplot()
+geom_boxplot(col = "darkseagreen4")
 ```
 
 
 ```{r echo=TRUE}
 #install.packages("ggplot2")
 library("ggplot2")
-ggplot(heights, mapping = aes(x = height, y = income))+geom_point()
+ggplot(heights, mapping = aes(x = height, y = income))+
+geom_point(col = "darkseagreen4")
 
 ```
 
 
-```{r}
-heightsPosInc <- subset(heights, income>0)
-ggplot(heightsPosInc, mapping = aes(x = heightInt, y = income)) +
-  scale_y_continuous(trans = scales::log_trans()) +
-  geom_boxplot()
-```
-
-
-```{r}
-ggplot(heights, mapping =aes(x = height, y = income))+
-geom_point()
-```
 
 De svarte prikkene som er øverst på rekken i geom_point plottet er outlayers. Det vil si at disse observasjonene skiller seg veldig i fra de observasjonene som er normalfordelte. Et eksempel på outlayers kan være når de fleste tjener mellom 400 000 og 800 000 NOK, men så er det noen som tjener over 2 millioner kroner. Dette er et typisk ekspemel på outlayers og på en graf så er det disse observasjonene som ligger lengst ifra de andre observasjonene, og i dette tilfellet øverst.
 
