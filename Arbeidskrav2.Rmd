@@ -27,7 +27,7 @@ heights$heightInt <- cut(heights$height, breaks = 8)
 knitr::kable(summary(heights[,4:9]))
 knitr::kable(summary(heights[,5:9]))
 knitr::kable(summary(heights[,2]))
-
+options(scipen = 999)
 ``` 
 
 
@@ -43,7 +43,7 @@ ggplot(heights, mapping = aes(x = height, y = income))+geom_point(colour = "dark
 
 ```{r}
 heightsPosInc <- subset(heights, income>0)
-ggplot(heightsPosInc, mapping = aes(x = heightInt, y = income)) +
+ggplot(heightsPosInc, mapping = aes(x = heightInt, y = income, fill = heightInt)) +
   scale_y_continuous(trans = scales::log_trans()) +
   geom_boxplot()
 ```
@@ -80,8 +80,8 @@ ggplot() + geom_point(data = heightsPosInc, mapping = aes(x = height, y = income
 ```
 
 ```{r}
-ggplot() + geom_point(data = heightsPosInc, mapping = aes(x = height, y = income), colour = "darkseagreen4") +
-  geom_smooth(data = heightsPosInc, mapping = aes(x = height, y = income)) + 
+ggplot() + geom_point(data = heightsPosInc, mapping = aes(x = height, y = income), col = "darkseagreen4") +
+  geom_smooth(data = heightsPosInc, mapping = aes(x = height, y = income), colour = "brown") + 
   theme_linedraw()
 ```
 
@@ -157,12 +157,28 @@ ggplot(data = heights, mapping = aes(x = height, y = income, colour = sex)) +
 
 ```{r}
 heightsPosInc$logincome <- log(heightsPosInc$income)
-hist(heightsPosInc$logincome, main = "Histogram Inntekt", xlab = "Log Income", ylab = "Antall")
+hist(heightsPosInc$logincome, main = "Histogram Inntekt", xlab = "Log Income", ylab = "Antall", col = "darkseagreen4")
+```
+```{r}
+ggplot(data = heightsPosInc) + 
+  geom_bar(mapping = aes(x = heightInt, colour =  heightInt))
+ggplot(data = heightsPosInc) + 
+  geom_bar(mapping = aes(x = heightInt, fill = heightInt))
+```
+```{r}
+ggplot(data = heightsPosInc) + 
+  geom_bar(mapping = aes(x = heightInt, fill = sex))
+```
+
+```{r}
+plot(density(heightsPosInc$logincome), col = "green4", lwd = 3)
 ```
 
 
 
 # Våre funn vs tidligere forskning
+
+
 
 # Konklusjon
 
