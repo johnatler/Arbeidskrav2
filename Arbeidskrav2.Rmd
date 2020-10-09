@@ -46,9 +46,7 @@ Ved å legge til "2:4" får vi opp den deskriptive statistikken for variabel 2 t
 I oppgave 1 skal vi foreta èn variabel analyse. Da har vi valgt å kikke på variablene høyde og inntekt hver for seg på grunn av dette var mest relevant for oppgaven. For disse 2 variablene skal vi lage et histogram, et density plot og et boxplot for å se om observasjonene er normalfordelte eller ikke.
 
 ```{r}
-
-hist(heights$height)
-hist(heights$height, main = "Histogram høyde", xlab = "inches", ylab = "antall")
+hist(heightsPosInc$height, main = "Histogram høyde", xlab = "inches", ylab = "antall")
 ```
 
 Ved å lage et histogram av høyde ser vi at observasjonene her er normalfordelte.
@@ -58,35 +56,45 @@ heights$NOK <- income * 10
 heights$cm <- height * 2,54
 
 ```{r}
-hist(heights$NOK)
-hist(heights$NOK, main = "Histogram Inntekt", xlab = "Nok", ylab = "antall")
+hist(heightsPosInc$NOK, main = "Histogram Inntekt", xlab = "NOK", ylab = "antall")
 ```
 
 Det er motsatt tilfelle for histogram for inntekt. Her er fordelingen ikke normalfordelt og i dette tilfellet vil vi forsøke å gjennomføre en transformasjon. 
 
 ```{r}
-hist(heights$NOK)
-hist(log(heights$NOK, main = "Histogram Inntekt", xlab = "Nok", ylab = "antall"))
+heightsPosInc$logincome <- log(heightsPosInc$income)
+hist(heightsPosInc$logincome, main = "Histogram Inntekt", xlab = "Log Income", ylab = "Antall")
 ```
-
+I eksempelet ovenfor har vi tatt en transformasjon og grafen er nå blitt tilnærmet normalfordelt, men ytterst til høyre har vi en outlayer.
 
 ```{r}
 
 d <- density(heights$income)
 plot(d)
-density(heights$income), main = "Density plot Inntekt", xlab = "NOK", ylab = "antall")
+density(heightsPosInc$income), main = "Density plot Inntekt", xlab = "NOK", ylab = "antall")
 ```
+I likhet med histogram for inntekt så gir også density plot for inntekt et bilde av grafen ikke er normalfordelt. Vi vurderer også i dette tilfellet slik at en transformasjon er på plass.
+
 ```{r}
+d <- density(heights$income)
+plot(d)
+```
+
+
+```
+
+{r}
 d <- density(heights$height)
 plot(d)
 main
 ```
 
 
-
 ```{r}
-ggplot(heights)+
-geom_boxplot(height)
+heightsPosInc <-subset(heights, income>0)
+ggplot(heightsPosInc, mapping =aes(x = heightInt, y = income))+
+scale_y_continuous(trans = scales::log_trans())+
+geom_boxplot()
 ```
 
 
@@ -105,20 +113,13 @@ ggplot(heightsPosInc, mapping = aes(x = heightInt, y = income)) +
   geom_boxplot()
 ```
 
-```{r}
-heightsPosInc <- subset(heights, income>0)
-ggplot(heightsPosInc, mapping = aes(x = height, y = income)) +
-  scale_y_continuous(trans = scales::log_trans()) +
-  geom_point(position = "jitter") +
-  geom_smooth(method = "lm")
-```
 
 ```{r}
-heightsPosInc <- subset(heights, income>0)
-ggplot(heightsPosInc, mapping = aes(x = height, y = income)) + 
-  geom_point(position = "jitter") +
-  geom_smooth(method = "lm")
+ggplot(heights, mapping =aes(x = height, y = income))+
+geom_point()
 ```
+
+De svarte prikkene som er øverst på rekken i geom_point plottet er outlayers. Det vil si at disse observasjonene skiller seg veldig i fra de observasjonene som er normalfordelte. Et eksempel på outlayers kan være når de fleste tjener mellom 400 000 og 800 000 NOK, men så er det noen som tjener over 2 millioner kroner. Dette er et typisk ekspemel på outlayers og på en graf så er det disse observasjonene som ligger lengst ifra de andre observasjonene, og i dette tilfellet øverst.
 
 ```{r}
 summary(lm(income~height, data = heights))
