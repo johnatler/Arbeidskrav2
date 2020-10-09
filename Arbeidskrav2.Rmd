@@ -110,8 +110,6 @@ geom_point(col = "darkseagreen4")
 
 ```
 
-
-
 De svarte prikkene som er øverst på rekken i geom_point plottet er outlayers. Det vil si at disse observasjonene skiller seg veldig i fra de observasjonene som er normalfordelte. Et eksempel på outlayers kan være når de fleste tjener mellom 400 000 og 800 000 NOK, men så er det noen som tjener over 2 millioner kroner. Dette er et typisk ekspemel på outlayers og på en graf så er det disse observasjonene som ligger lengst ifra de andre observasjonene, og i dette tilfellet øverst.
 
 ```{r}
