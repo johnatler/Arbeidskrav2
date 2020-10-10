@@ -17,10 +17,15 @@ options(scipen = 999)
 
 ```
 
+## Innledning
 
-# Innledning
+I arbeidslivet er det mange faktorer som påvirker årslønnen til den ansatte. Ved hjelp av datasettet "heights" skal vi i denne oppgaven undersøke om det er høyde som ene og alene har påvirkning for inntjening av lønn. Samtidig skal vi undersøke om andre variabler som alder, utdanning og sivilstatus og kjønn også påvirker årslønnen til den ansatte og måle disse variablene opp mot høyde. Vi har valgt å avgrense datasettet til de personene som har positiv inntekt (5266 av 7006 deltakende i datsettet). Grunnet stort utvalg av respondenter til dette datasettet, bør disse dataene være troverdig iforhold til realiteten
 
-# Statistikk
+
+I datasettet ser vi tydelig at de personene som er høyere tjener bedre enn de som er lavere. Ved hjelp av oppgavesettet skal vi gjennomføre ulike plot både på envariabel analyse for å kartlegge inntekten i forhold til høyden, samt på tovariabel analyse for å finne ut om det faktisk er høyde som utgjør inntektsforskjellen på de ansatte eller om det er andre faktorer som utgjør at lønnen er høyere til de høye personene. 
+
+
+## Statistikk
 
 ```{r}
 library(modelr)
@@ -33,7 +38,7 @@ knitr::kable(summary(heights[,5:9]))
 
 ``` 
 
-## Deskriptiv statistikk høyde
+## Deskriptiv statistikk høyde, vekt og alder.
 
 ```{r}
 knitr::kable(summary(heights[2]))
@@ -43,12 +48,16 @@ Ved hjelp av denne datakoden får vi opp den deskriptive statistikken for høyde
 ```{r}
 knitr::kable(summary(heights[2:4]))
 ```
-Ved å legge til "2:4" får vi opp den deskriptive statistikken for variabel 2 til 4, det vil si både høyde, vekt og alder. Ut ifra tallene for alder ser vi at de som er inkludert i dette datasettet er personer mellom 47 og 56 år og gjennomsnittet for disse er 51,33 år.
+Ved å legge til "2:4" får vi opp den deskriptive statistikken for variabel 2 til 4, det vil si både høyde, vekt og alder. Ut ifra tallene for alder ser vi at de som er inkludert i dette datasettet er personer mellom 47 og 56 år og gjennomsnittet for disse er 51,33 år. Det vil si at de fleste som er deltakende i datasettet er personer som er ferdig med utdanning. Nedenfor ser vi at gjennomsnittet for antall år utdanning er rett i overkant av 13 år.
+
+```{r}
+knitr::kable(summary(heights[7]))
+```
+
 
 # Analyse og plots
 
 I oppgave 1 skal vi foreta èn variabel analyse. Da har vi valgt å kikke på variablene høyde og inntekt hver for seg på grunn av dette var mest relevant for oppgaven. For disse 2 variablene skal vi lage et histogram, et density plot og et boxplot for å se om observasjonene er normalfordelte eller ikke.
-
 
 
 ```{r echo=TRUE}
@@ -80,9 +89,7 @@ Det er motsatt tilfelle for histogram for inntekt. Her er fordelingen ikke norma
 heightsPosInc$logincome <- log(heightsPosInc$income)
 hist(heightsPosInc$logincome, main = "Histogram transformert inntekt (log inntekt)", xlab = "Log Income", ylab = "Antall")
 ```
-
-I eksempelet ovenfor har vi tatt en transformasjon og grafen er nå blitt tilnærmet normalfordelt, men ytterst til høyre har vi en outlayer.
-
+I eksempelet ovenfor har vi foretatt en transformasjon og grafen er nå blitt tilnærmet normalfordelt, men ytterst til høyre har vi en outlayer.
 
 ```{r}
 plot(density(heightsPosInc$height), main = "Density plot høyde", xlab = "NOK", ylab = "andel")
@@ -95,19 +102,23 @@ plot(density(heightsPosInc$income), main = "Density plot inntekt", xlab = "innte
 
 I likhet med histogram for inntekt så gir også density plot for inntekt et bilde av grafen ikke er normalfordelt. Vi vurderer også i dette tilfellet slik at en transformasjon er på plass.
 
-logincome
+logincome rm(kg)
 
 ```{r}
 plot(density(heightsPosInc$logincome), main = "Density plot transformert inntekt (log inntekt)", xlab = "loginntekt", ylab = "Andel", col = "green4")
 
 ```
-I eksempelet ovenfor har vi tatt en transformasjon og grafen er nå blitt tilnærmet normalfordelt, men ytterst til høyre har vi en outlayer.
+I eksempelet ovenfor har vi foretatt en transformasjon og grafen er nå blitt tilnærmet normalfordelt, men ytterst til høyre har vi en outlayer.
+
+```{r}
+heights_under1000000 <- heights %>%
+  filter(income < 100000)
+```
 
 
 ```{r}
 heightsPosInc <-subset(heights, income>0)
-ggplot(heightsPosInc, mapping =aes(x = heightInt, y = income, fill= heightInt))+
-scale_y_continuous(trans = scales::log_trans())+
+ggplot(heights_under1000000, mapping =aes(x = heightInt, y = income, fill= heightInt))+
 geom_boxplot(col = "darkseagreen4")
 ```
 
