@@ -44,7 +44,6 @@ knitr::kable(summary(heights[,5:9]))
 
 ## Deskriptiv statistikk høyde, vekt og alder.
 
-
 ```{r}
 knitr::kable(summary(heightsPosInc[2:4]))
 ```
