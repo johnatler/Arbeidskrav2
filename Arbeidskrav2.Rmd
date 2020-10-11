@@ -72,11 +72,12 @@ ggplot(heights, mapping = aes(x = height, y = income))+geom_point()
 hist(heightsPosInc$height, main = "Histogram høyde", xlab = "inches", ylab = "antall", col = "darkseagreen4")
 ```
 
-Ved å lage et histogram av høyde ser vi at observasjonene her er normalfordelte.
+Ved å lage et histogram av høyde ser vi at observasjonene i datasettet "heightsPosInc" er normalfordelte.
 
 heights$NOK <- income * 10
 
 heights$cm <- height * 2,54
+
 
 
 ```{r}
@@ -121,7 +122,7 @@ heightsPosInc <-subset(heights, income>0)
 ggplot(heights_under1000000, mapping =aes(x = heightInt, y = income, fill= heightInt))+
 geom_boxplot(col = "darkseagreen4")
 ```
-
+På boxplot har vi tatt høydeintervall i forhold til inntekt. Vi har valgt å avgrense inntekten til maksimalt kr. 1 000 000 på dette plotet for å unngå outlayers som gjør at grafen blir mindre oversiktlig. 
 
 ```{r echo=TRUE}
 #install.packages("ggplot2")
