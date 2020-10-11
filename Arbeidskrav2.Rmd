@@ -156,7 +156,7 @@ For å fremvise andre varibler visuelt, gjennom bruk av for eksempel shape eller
 
 Det er likevel et men her, da vi kan utvide vår forståelse gjennom bruk av facetter.
 
-## Facetter:
+## Facetter
 
 Facetter kan uten tvil være nyttig for analyseformål og for å gi oss mer innsikt om dataene vi har. 
 
@@ -204,8 +204,6 @@ Grafene ovenfor antyder at jo mer utdanning en har, jo mer virker det som at hø
 
 
 
-
-
 # Hvor mye tjener en per ekstra cm i høyde?
 ```{r}
 summary(lm (NOK ~ cm, data = heightsPosInc))
@@ -225,5 +223,3 @@ Som man kan se av resultatene over gir en cm nå i overkant av 2300 kr mer i inn
 # Konklusjon
 
 Gjennom denne analysen har vi funnet antydninger for at høyde har en betydning på inntekt. For hver ekstra centimeter fant vi en estimert positiv nytteverdi på i overkant av 2300kr. En populær ordtolkning av dette resultatet er at du som barn burde ha spist opp grønnsakene dine! Videre fant vi også en sammenheng mellom blant annet utdanning og inntekt, der et ekstra år med utdanning gir en estimert ekstra årlig inntekt på ca. 86 000 kr. En nytolkning av den forrige tolkningen kan dermed være å investere tid i å lese bøker fremfor å spise opp grønnsakene dine som ung, selv om begge nok vil være å anbefales. Og er du relativt lav, så fortvil ikke, du kan hente inn inntektsforspranget på de som er høyere enn deg gjennom å ta en lengre utdannelse! 
-
-
