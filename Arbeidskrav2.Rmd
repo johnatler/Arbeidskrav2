@@ -43,6 +43,7 @@ Ved hjelp av denne datakoden får vi blant annet opp den deskriptive statistikke
 
 # Analyse og plots
 
+## En variabel - analyse
 I oppgave 1 skal vi foreta èn variabel analyse. Da har vi valgt å kikke på variablene høyde og inntekt hver for seg på grunn av dette var mest relevant for oppgaven. For disse 2 variablene skal vi lage et histogram, et density plot og et boxplot for å se om observasjonene er normalfordelte eller ikke.
 
 
@@ -156,7 +157,7 @@ For å fremvise andre varibler visuelt, gjennom bruk av for eksempel shape eller
 
 Det er likevel et men her, da vi kan utvide vår forståelse gjennom bruk av facetter.
 
-## Facetter
+### Facetter
 
 Facetter kan uten tvil være nyttig for analyseformål og for å gi oss mer innsikt om dataene vi har. 
 
