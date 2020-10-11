@@ -36,7 +36,7 @@ I datasettet ser vi tydelig at de personene som er høyere tjener bedre enn de s
 ```{r}
 library("knitr")
 
-kable(summary(heightsPosInc[c(4,7, 10:11)]))
+kable(summary(heightsPosInc[c(4,7, 9:10)]))
 ```
 Ved hjelp av denne datakoden får vi blant annet opp den deskriptive statistikken for høyde i datasettet heightsPosInc. Gjennomsnittet for dette utvalget på deltakende personer er 183,1 cm. Ut ifra tallene for alder ser vi at de som er inkludert i dette datasettet er personer mellom 47 og 56 år og gjennomsnittsalderen for disse er 51,28 år. Det vil si at de fleste som er deltakende i datasettet er personer som er ferdig med utdanning. Videre ser vi at gjennomsnittet for antall år utdanning er rett i overkant av 13,5 år. Gjennomsnittslønnen er dernest i underkant av 550 000kr.
 
