@@ -18,11 +18,12 @@ options(scipen = 999)
 ```
 
 heights$NOK <- income * 10
+heights$cm  <- height * 2,54
 
 
 ## Innledning
 
-I arbeidslivet er det mange faktorer som påvirker årslønnen til den ansatte. Ved hjelp av datasettet "heights" skal vi i denne oppgaven undersøke om det er høyde som ene og alene har påvirkning for inntjening av lønn. Samtidig skal vi undersøke om andre variabler som alder, utdanning og sivilstatus og kjønn også påvirker årslønnen til den ansatte og måle disse variablene opp mot høyde. Vi har valgt å avgrense datasettet til de personene som har positiv inntekt (5266 av 7006 deltakende i datsettet). Grunnet stort utvalg av respondenter til dette datasettet, bør disse dataene være troverdig iforhold til realiteten
+I arbeidslivet er det mange faktorer som påvirker årslønnen til den ansatte. Ved hjelp av datasettet "heightsPosInc" skal vi i denne oppgaven undersøke om det er høyde som ene og alene har påvirkning for inntjening av lønn. Samtidig skal vi undersøke om andre variabler som alder, utdanning og sivilstatus og kjønn også påvirker årslønnen til den ansatte og måle disse variablene opp mot høyde. Vi har valgt å avgrense datasettet til de personene som har positiv inntekt (5266 av 7006 deltakende i datsettet). Grunnet stort utvalg av respondenter til dette datasettet, bør disse dataene være troverdig iforhold til realiteten
 
 
 I datasettet ser vi tydelig at de personene som er høyere tjener bedre enn de som er lavere. Ved hjelp av oppgavesettet skal vi gjennomføre ulike plot både på envariabel analyse for å kartlegge inntekten i forhold til høyden, samt på tovariabel analyse for å finne ut om det faktisk er høyde som utgjør inntektsforskjellen på de ansatte eller om det er andre faktorer som utgjør at lønnen er høyere til de høye personene. 
@@ -43,15 +44,11 @@ knitr::kable(summary(heights[,5:9]))
 
 ## Deskriptiv statistikk høyde, vekt og alder.
 
-```{r}
-knitr::kable(summary(heightsPosInc[2]))
-```
-Ved hjelp av denne datakoden får vi opp den deskriptive statistikken for høyde i datasettet heightsPosInc. Gjennomsnittet for dette utvalget på 7006 personer er 67,31 inches eller 170,97 cm.
 
 ```{r}
 knitr::kable(summary(heightsPosInc[2:4]))
 ```
-Ved å legge til "2:4" får vi opp den deskriptive statistikken for variabel 2 til 4, det vil si både høyde, vekt og alder. Ut ifra tallene for alder ser vi at de som er inkludert i dette datasettet er personer mellom 47 og 56 år og gjennomsnittsalderen for disse er 51,28 år. Det vil si at de fleste som er deltakende i datasettet er personer som er ferdig med utdanning. Nedenfor ser vi at gjennomsnittet for antall år utdanning er rett i overkant av 13,5 år.
+Ved hjelp av denne datakoden får vi blant annet opp den deskriptive statistikken for høyde i datasettet heightsPosInc. Gjennomsnittet for dette utvalget på deltakende personer er 67,31 inches eller 170,97 cm. Ut ifra tallene for alder ser vi at de som er inkludert i dette datasettet er personer mellom 47 og 56 år og gjennomsnittsalderen for disse er 51,28 år. Det vil si at de fleste som er deltakende i datasettet er personer som er ferdig med utdanning. Nedenfor ser vi at gjennomsnittet for antall år utdanning er rett i overkant av 13,5 år.
 
 ```{r}
 knitr::kable(summary(heightsPosInc[7]))
