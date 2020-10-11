@@ -33,7 +33,6 @@ I datasettet ser vi tydelig at de personene som er høyere tjener bedre enn de s
 
 ## Deskriptiv statistikk alder, utdanning, inntekt og høyde.
 
-
 ```{r}
 library("knitr")
 
