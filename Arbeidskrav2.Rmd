@@ -35,109 +35,110 @@ options(scipen = 999)
 
 ```{r echo=TRUE}
 #install.packages("ggplot2")
-library("ggplot2")
-ggplot(heights, mapping = aes(x = height, y = income))+geom_point(colour = "darkseagreen4")
+#library("ggplot2")
+ggplot(heights, mapping = aes(x = height, y = income))+geom_point(colour = "darkseagreen4") +
+  xlab("Høyde") + 
+  ylab("Inntekt") + 
+  ggtitle("Inntekt basert på høyde")
 
 ```
 
+Ved å plotte observasjonene kan vi få en oversikt over datasettet vi har. Likevel vil det være hensiktsmessig å kun se på observasjoner over 0. Av den grunn har vi utarbeidet et datasett der vi utelater alle observasjoner som har en oppgitt inntekt på under eller lik 0. 
 
 ```{r}
-heightsPosInc <- subset(heights, income>0)
+heightsPosInc <- subset(heights, income > 0)
 ggplot(heightsPosInc, mapping = aes(x = heightInt, y = income, fill = heightInt)) +
   scale_y_continuous(trans = scales::log_trans()) +
-  geom_boxplot()
+  geom_boxplot() +
+  xlab("Høydeintervall") + 
+  ylab("Inntekt") + 
+  ggtitle("Inntekt basert på høyde - Box Plot")
 ```
 
-```{r}
-heightsPosInc <- subset(heights, income>0)
-ggplot(heightsPosInc, mapping = aes(x = height, y = income)) +
-  scale_y_continuous(trans = scales::log_trans()) +
-  geom_point(position = "jitter", colour = "darkseagreen4") +
-  geom_smooth(method = "lm")
-```
+Ettersom vi nå ser på observasjoner med inntekt over 0, vil det være hensiktsmessig å se nærmere på sammenhengen mellom høyde og inntekt i form av å se på regresjonslinjen. Den blå regresjonslinjen gjelder her for alle datapunktene, mens den røde regresjonslinjen tar hensyn til at det eksisterer såkalte ekstreme observasjoner. Dette er observasjoner som potensielt kan ødelegge tolkninger av datasett da de kan "dra" regresjonslinja i ene eller andre retningen. Ved hjelp av robust lineær regresjon utelates disse observasjonene, og i dette tilfellet gjør det at helningen på kurven er mindre. Med andre ord får høyde en mindre betydning for inntekt om en ser bort fra disse observasjonene. 
+
 
 ```{r}
 heightsPosInc <- subset(heights, income>0)
 ggplot(heightsPosInc, mapping = aes(x = height, y = income)) + 
   geom_point(position = "jitter", colour = "darkseagreen4") +
   geom_smooth(method = "lm") +
-  geom_smooth(method = MASS::rlm, colour = "firebrick3", se = TRUE)
+  geom_smooth(method = MASS::rlm, colour = "firebrick3", se = TRUE) +
+  xlab("Høyde") + 
+  ylab("Inntekt") + 
+  ggtitle("Inntekt basert på høyde")
 ```
 
+## Flere variabler - analyse
+
+Det første som kan være interessant å undersøke er om det ser ut til å være en forskjell mellom menn og kvinner. 
 
 ```{r}
-summary(lm(income ~ height, data = heights))
-```
-
-Del 2) To variabler analyse: geom_point(), geom_jitter(), geom_smooth() etc., event. mer enn to variabler hvis det kan øke innsikten (bind til farge, form, størrelse eller alpha alt etter hva som har størst informasjonsverdi). Kan bruk av facets gi mer innsikt?
-
-
-
-```{r}
-ggplot() + geom_point(data = heightsPosInc, mapping = aes(x = height, y = income, colour = education, size = age, shape = sex)) +
-  labs(colour = "Education", size = "Age", shape = "Sex") +
-  geom_smooth(data = heightsPosInc, mapping = aes(x = height, y = income))
-```
-
-```{r}
-ggplot() + geom_point(data = heightsPosInc, mapping = aes(x = height, y = income), col = "darkseagreen4") +
-  geom_smooth(data = heightsPosInc, mapping = aes(x = height, y = income), colour = "brown") + 
-  theme_linedraw()
-```
-
-```{r}
-plot1 <- ggplot(data = heights, mapping = aes(x = height, y = income, colour = sex)) +
+plot1 <- ggplot(data = heightsPosInc, mapping = aes(x = height, y = income, colour = sex)) +
   geom_point() +
-  geom_smooth(method = "lm", se = TRUE)
+  geom_smooth(method = "lm", se = TRUE) +
+  xlab("Høyde") + 
+  ylab("Inntekt") 
 plot1
 ```
 
-
+I plottet over ser vi et visuelt bilde av hvordan høyde kan være med på å forklare inntekt gitt om en er mann eller kvinne. Fargen rosa viser her til observasjonene av menn, mens de lyseblå er kvinner. Den rosa regresjonslinja er her regresjonslinjen for menn og den lyseblå for kvinner. Som man kan se er linja brattere for mennene enn kvinnene, noe som peker i retning for at høyden har mer å si for menn med tanke på inntekt enn for kvinner.
 
 ```{r}
-plot2 <- ggplot(data = heights, mapping = aes(x = height, y = income, colour = sex)) +
+plot2 <- ggplot(data = heightsPosInc, mapping = aes(x = height, y = income, colour = sex)) +
   geom_point() +
-  geom_smooth(method = MASS::rlm, se = TRUE)
+  geom_smooth(method = MASS::rlm, se = TRUE) + 
+  xlab("Høyde") + 
+  ylab("Inntekt")
 plot2
 ```
 
-I plottet over ser vi et visuelt bilde av hvordan høyde kan være med på å forklare inntekt gitt om en er mann eller kvinne. Fargen rosa viser her til observasjonene av menn, mens de lyseblå er kvinner. Den rosa regresjonslinja er her regresjonslinjen for menn og den lyseblå for kvinner. Som man kan se er linja brattere for mennene enn kvinnene, noe som peker mot at høyden har mer å si for menn med tanke på inntekt enn for kvinner. I plot 2 er det også tatt høyde for ekstreme observasjoner for å kunne få en mer riktigere helning på kurven. 
+Likevel er det her ikke tatt hensyn til at ekstreme observasjoner i datasettet kan spille inn på resultatene også her. I plot 2 er det tatt høyde for ekstreme observasjoner for å kunne få en mer riktigere bilde på helning på kurven, noe som vil si at de ekstreme observasjonene ikke er med i utregningen. Dette har vi valgt å fremstille visuelt for å kunne illustrere hvilken betydning dette har på helningen til regresjonslinja. 
 
-Under følger en oversikt over begge plottene. 
+Under følger en oversikt over begge plottene. Spesielt linja for menn endrer seg ved å utelate de ekstreme observasjonene. Dette gir mening ved å se på de rosa observasjonene øverst i høyre hjørne på plottene.   
 ```{r}
 # install.packages("ggpubr")
 library(ggpubr)
-ggarrange(plot1, plot2, ncol = 2, nrow = 1, labels = c("Med ekstrempunkt", "Uten ekstrempunkt"))
+ggarrange(plot1, plot2, ncol = 2, nrow = 1, labels = c("Med ekstrempunkt", "Uten ekstrempunkt")) 
 ```
+For å fremvise andre varibler visuelt, gjennom bruk av for eksempel shape eller colour, fant vi det ikke tilstrekkelig nyttig å gjøre dette på grunn av det store antallet observasjoner. Det visuelle bildet vil da være for sammensatt og vi mener at en som leser ikke enkelt kan hente ut noe nyttig informasjon fra plottene.
 
-Facetter:
+Det er likevel et men her, da vi kan utvide vår forståelse gjennom bruk av facetter.
 
-Facetter kan uten tvil være nyttig for analyseformål og å gi oss mer innsikt om dataene vi har. 
+## Facetter:
 
-Først følger en facet der vi også ser på utdanning. Jo lysere blåfarge, jo mer utdanning. Gir også oss den innsikt av at det ser ut som at det eksisterer en tendens for at de med lavere utdanning har lavere lønn. Samtidig er denne facet-bruken godt egnet for å sammenligne menn og kvinner. 
+Facetter kan uten tvil være nyttig for analyseformål og for å gi oss mer innsikt om dataene vi har. 
+
+Det første vi har valgt å se på er utdanning. Jo lysere blåfarge på punktet, jo mer utdanning. Dette gir  oss også den innsikt av at det ser ut som at det eksisterer en tendens for at de med lavere utdanning har lavere lønn. Samtidig er en facet-inndeling i forhold til kjønn godt egnet for å sammenligne menn og kvinner. Dette gjør at vi kan fremstille høyde og utdannings betydning for inntekt både for menn og kvinner.  
 
 ```{r}
 ggplot(heightsPosInc, mapping = aes(x = height, y = income, colour = education)) + 
   geom_point(position = "jitter") +
   geom_smooth(method = MASS::rlm) +
-  facet_grid(~ sex)
+  facet_grid(~ sex) + 
+  xlab("Inntekt") + 
+  ylab("Høyde") + 
+  ggtitle("Inntekt basert på kjønn og høyde ")
 ```
+
+Videre vil det også kunne gi utvidet forståelse av datasettet ved å dele inn etter sivilstatus. 
+
 ```{r}
 ggplot(heightsPosInc, mapping = aes(x = height, y = income)) + 
   geom_point(position = "jitter", colour = "darkseagreen4") +
   geom_smooth(method = MASS::rlm, colour = "brown") +
-  facet_grid(~ marital)
+  facet_grid(~ marital) + 
+  xlab("Høyde (60-80) og sivilstatus (singel etc.)") + 
+  ylab("Inntekt") + 
+  ggtitle("Inntekt basert på sivilstatus og høyde")
 ```
-Over har vi istedenfor sett på om forskjeller i sivilstatus kan ha noe å si for forholdet mellom høyde og inntekt. Det later til å være slik. Ekstreme observasjoner er hensyntatt også her. Som man ser virker høyde å ha mer å si for inntekt dersom man er gift, i forhold til for eksempel noen som er single. 
+Ovenfor har vi sett på om forskjeller i sivilstatus kan ha noe å si for forholdet mellom høyde og inntekt. Det later til å være slik. Som man ser virker høyde å ha mer å si for inntekt dersom man er gift, enn for blant annet single. Dette på grunn av helningen på kurven er brattere for gifte enn single.
 
-Ny facet:
+Hvorvidt utdanningsnivå har noe å si for hvordan høyde henger sammen med inntekt, er også noe som kan være relevant å undersøke. 
 
 ```{r}
 heightsPosInc$educationNum <- as.numeric(heightsPosInc$education)
-```
 
-
-```{r}
 heightsPosInc$educationInt <- cut(heightsPosInc$educationNum, breaks = 6)
 ```
 
@@ -145,15 +146,15 @@ heightsPosInc$educationInt <- cut(heightsPosInc$educationNum, breaks = 6)
 ggplot(heightsPosInc, mapping = aes(x = height, y = income)) + 
   geom_point(position = "jitter", colour = "darkseagreen4") +
   geom_smooth(method = MASS::rlm, colour = "brown") +
-  facet_grid(~ educationInt)
+  facet_grid(~ educationInt) + 
+   xlab("Høyde (60-80) og utdanningsnivå (0.981 - 20) ") + 
+  ylab("Inntekt") + 
+  ggtitle("Inntektsfordeling basert på utdanningsnivå og høyde")
 ```
-Grafene ovenfor antyder at jo mer utdanning en har, jo mer virker det som at høyde har å si på inntekten. Gir ikke så veldig mye innsikt, den praktiske betydningen er usikker, men morsomt å ha med/undersøke likevel. 
+Grafene ovenfor antyder at jo mer utdanning en har, jo mer virker det som at høyde har å si for inntekten. Dette på grunn av at helningen på kurven blir brattere og brattere for mer og mer utdanning. Dette kan gi mening ettersom det generelt sett er lavere sprang i inntekt for de med lavere utdanning enn for de med høy utdanning. 
 
-```{r}
-ggplot(data = heights, mapping = aes(x = height, y = income, colour = sex)) +
-  geom_point() +
-  geom_smooth(method = MASS::rlm, se = TRUE)
-```
+
+Til Orjan: 
 
 ```{r}
 heightsPosInc$logincome <- log(heightsPosInc$income)
@@ -163,12 +164,21 @@ hist(heightsPosInc$logincome, main = "Histogram Inntekt", xlab = "Log Income", y
 ggplot(data = heightsPosInc) + 
   geom_bar(mapping = aes(x = heightInt, colour =  heightInt))
 ggplot(data = heightsPosInc) + 
-  geom_bar(mapping = aes(x = heightInt, fill = heightInt))
+  geom_bar(mapping = aes(x = heightInt, fill = heightInt)) + 
+  xlab("Høydeintervall") + 
+  ylab("Antall") + 
+  ggtitle("Høydefordeling for utvalg")
 ```
+
+
 ```{r}
 ggplot(data = heightsPosInc) + 
-  geom_bar(mapping = aes(x = heightInt, fill = sex))
+  geom_bar(mapping = aes(x = height, fill = sex ), position = "dodge") + 
+  xlab("Høyde") + 
+  ylab("Antall") + 
+  ggtitle("Høydefordeling menn og kvinner")
 ```
+
 
 ```{r}
 plot(density(heightsPosInc$logincome), col = "green4", lwd = 3)
@@ -176,9 +186,24 @@ plot(density(heightsPosInc$logincome), col = "green4", lwd = 3)
 
 
 
-# Våre funn vs tidligere forskning
+# Hvor mye tjener vi per ekstra inch (2,72cm) i høyde?
+```{r}
+summary(lm (income ~ height, data = heightsPosInc))
+```
+
+Som man ser er.....
 
 
+
+Det vil også være aktuelt å se på andre forklaringsfaktorer slik som vi også har gjort visuelt. Her har vi valgt å ta med de variablene som vi tidligere har brukt i oppgaven.
+
+```{r}
+summary(lm (income ~ height + marital + sex + education, data = heightsPosInc))
+```
+
+Som man kan se av resultatene over gir en ekstra inch (2,72cm) estimert i overkant av 640 dollar ekstra i inntekt per år. 
+
+En populær ordtolkning av dette resultatet er at du som barn burde ha spist opp grønnsakene dine! 
 
 # Konklusjon
 
