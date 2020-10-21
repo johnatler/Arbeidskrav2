@@ -56,6 +56,7 @@ ggplot(heightsPosInc, mapping = aes(x = cm, y = income))+geom_point(colour = "da
   ggtitle("Inntekt basert på høyde")
 
 ```
+
 De grønne prikkene som er øverst på rekken i geom_point plottet er outlayers. Det vil si at disse observasjonene skiller seg veldig i fra de observasjonene som er normalfordelte. Et eksempel på outlayers kan være når de fleste tjener mellom 400 000 og 800 000 NOK, men så er det noen som tjener over 2 millioner kroner. Dette er et typisk ekspemel på outlayers og på en graf så er det disse observasjonene som ligger lengst ifra de andre observasjonene, og i dette tilfellet øverst.
 
 ```{r}
@@ -65,6 +66,7 @@ ggplot(data = heightsPosInc) +
   ylab("Antall") + 
   ggtitle("Høydefordeling menn og kvinner")
 ```
+
 Denne grafen viser høydefordelingen mellom mennene og kvinnene i datasettet. Vi ser tydelig her at fordelingen er normalfordelt, og en kan også se at høyden for menn i gjennomsnitt er høyere enn for kvinner.
 
 ```{r}
@@ -84,11 +86,13 @@ Det er motsatt tilfelle for histogram for inntekt. Her er fordelingen ikke norma
 heightsPosInc$logNOK <- log(heightsPosInc$NOK)
 hist(heightsPosInc$logNOK, main = "Histogram transformert inntekt (log inntekt)", xlab = "Log Income", ylab = "Antall", col = "darkseagreen4")
 ```
+
 I eksempelet ovenfor har vi foretatt en transformasjon og grafen er nå blitt tilnærmet normalfordelt, men ytterst til høyre har vi en outlayer.
 
 ```{r}
 plot(density(heightsPosInc$cm), main = "Density plot høyde", xlab = "Høyde i cm", ylab = "Andel")
 ```
+
 I likhet med histogram for høyde så gir også density plot for høyde et bilde av at grafen er normalfordelt. Det vil si at flesteparten av observasjonene er sentrert rundt 170-190 cm.
 
 ```{r}
@@ -101,6 +105,7 @@ I likhet med histogram for inntekt så gir også density plot for inntekt et bil
 plot(density(heightsPosInc$logNOK), main = "Density plot transformert inntekt", xlab = "Log inntekt", ylab = "Andel", col = "green4")
 
 ```
+
 I eksempelet ovenfor har vi foretatt en transformasjon og grafen er nå blitt tilnærmet normalfordelt, men ytterst til høyre har vi en outlayer.
 
 ```{r}
@@ -110,6 +115,7 @@ heights_under1000000$cmInt <- cut(heights_under1000000$cm, breaks = 7)
 ggplot(heights_under1000000, mapping =aes(x = cmInt, y = income, fill= cmInt))+
 geom_boxplot(col = "darkseagreen4")
 ```
+
 På boxplot har vi tatt høydeintervall i forhold til inntekt. Vi har valgt å avgrense inntekten til maksimalt kr. 1 000 000 på dette plotet for å unngå outlayers som gjør at grafen blir mindre oversiktlig. 
 
 ```{r}
@@ -121,6 +127,7 @@ ggplot(heightsPosInc, mapping = aes(x = cm, y = NOK)) +
   ylab("Inntekt i NOK") + 
   ggtitle("Inntekt basert på høyde")
 ```
+
 Ettersom vi ser på observasjoner med inntekt over 0, vil det være hensiktsmessig å se nærmere på sammenhengen mellom høyde og inntekt i form av å se på regresjonslinjen. Den blå regresjonslinjen gjelder her for alle datapunktene, mens den røde regresjonslinjen tar hensyn til at det eksisterer såkalte ekstreme observasjoner. Dette er observasjoner som potensielt kan ødelegge tolkninger av datasett da de kan "dra" regresjonslinja i ene eller andre retningen. Ved hjelp av robust lineær regresjon utelates disse observasjonene, og i dette tilfellet gjør det at helningen på kurven blir mindre. Med andre ord får høyde en mindre betydning for inntekt om en ser bort fra disse observasjonene. 
 
 ## Flere variabler - analyse
@@ -153,6 +160,7 @@ Under følger en oversikt over begge plottene. Spesielt linja for menn endrer se
 library(ggpubr)
 ggarrange(plot1, plot2, ncol = 2, nrow = 1, labels = c("Med ekstrempunkt", "Uten ekstrempunkt")) 
 ```
+
 For å fremvise andre varibler visuelt, gjennom bruk av for eksempel shape eller colour, fant vi det ikke tilstrekkelig nyttig å gjøre dette på grunn av det store antallet observasjoner. Det visuelle bildet vil da være for sammensatt og vi mener at en som leser ikke enkelt kan hente ut noe nyttig informasjon fra plottene.
 
 Det er likevel et men her, da vi kan utvide vår forståelse gjennom bruk av facetter.
@@ -184,6 +192,7 @@ ggplot(heightsPosInc, mapping = aes(x = cm, y = NOK)) +
   ylab("Inntekt i NOK") + 
   ggtitle("Inntekt basert på sivilstatus og høyde")
 ```
+
 Ovenfor har vi sett på om forskjeller i sivilstatus kan ha noe å si for forholdet mellom høyde og inntekt. Det later til å være slik. Som man ser virker høyde å ha mer å si for inntekt dersom man er gift, enn for blant annet single. Dette på grunn av helningen på kurven er brattere for gifte enn single.
 
 Hvorvidt utdanningsnivå har noe å si for hvordan høyde henger sammen med inntekt, er også noe som kan være relevant å undersøke. 
@@ -201,6 +210,7 @@ ggplot(heightsPosInc, mapping = aes(x = cm, y = NOK)) +
   ylab("Inntekt") + 
   ggtitle("Inntektsfordeling basert på utdanningsnivå og høyde")
 ```
+
 Grafene ovenfor antyder at jo mer utdanning en har, jo mer virker det som at høyde har å si for inntekten. Dette på grunn av at helningen på kurven blir brattere og brattere for mer og mer utdanning. Dette kan gi mening ettersom det generelt sett er lavere sprang i inntekt for de med lavere utdanning enn for de med høy utdanning. 
 
 
