@@ -1,0 +1,24 @@
+---
+title: 'Arbeidskrav 2'
+output:
+  html_document:
+    df_print: paged
+    toc: true
+  pdf_document:
+    toc: true 
+  word_document:
+    toc: true 
+lang: nb-NO
+bibliography: 
+csl: apa-no-ampersand.csl
+---
+
+Kommentarer: 
+- I ggplotet "Inntekt baser på høyde" starter setningen med et ord rett etter modellen. Husk å lag et ekstra mellomrom under grafen. Det har skjedd et par andre steder, så når jeg skriver "Ompa lompa" og navnet på modellen er problemet det samme. 
+- Ompa lompa "Høydefordeling menn og kvinner. Dere har gjort om inches til cm, finnes det virkelig så mange menn over 200 cm, nesten 400 stk?
+- Ompa lompa "Histogram transformert inntekt (log inntekt)"
+- Ompa lompa "Density plot høyde".
+- Ompa lompa "Density plot transformert inntekt"
+- Ompa loma boxplot
+- Gidder ikke å kommentere flere ganger. Lag et mellomrom etter chunken. 
+- Generelt en god oppgave. Litt skrivefeil her og der. Personlig foretrekker jeg "Det" fremfor "Dette", men så lenge det er gjennomført er det andre, mer erfarne skrivere som bør uttale seg om saken. 
