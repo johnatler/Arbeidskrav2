@@ -61,10 +61,8 @@ Ved hjelp av oppgavesettet skal vi gjennomføre ulike plot både på envariabel 
 # rewritten in the tidyverse way
 heightsPosInc %>% 
   select(age, education, income_NOK, height_cm) %>% 
-  summary() 
-# slå på kable til slutt. kable output "lugger" 
-# ved scrolling i .Rmd dokumenter 
-#%>%   kable()
+  summary() %>%
+  kable()
 ```
 
 Ved hjelp av denne datakoden får vi blant annet opp den deskriptive statistikken for høyde i datasettet heightsPosInc.
