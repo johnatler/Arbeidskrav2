@@ -25,7 +25,7 @@ library("ggplot2")
 # noen er veldig lite glad i science notation ;-)
 #options(scipen = 999)
 # jeg vil forslå 
-options(scipen = 6)
+options(scipen = 2)
 # så fåen science notation for veldig små og veldig store tall
 # install.packages("ggpubr")
 library(ggpubr)
