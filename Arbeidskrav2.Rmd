@@ -12,156 +12,288 @@ lang: nb-NO
 bibliography: 
 csl: apa-no-ampersand.csl
 ---
-```{r}
+```{r setup}
+# all calls to library() should be here. Easy to see what
+# libraries must be installed to run the document. 
+# Code-chunk called setup is run before any code-chunk 
+# is run
 library(modelr)
-?modelr::heights
-x <- modelr::heights
-attach(x)
-options(scipen = 999)
-heightsPosInc <- subset(heights, income > 0)
-heightsPosInc$NOK <- heightsPosInc$income * 10
-heightsPosInc$cm  <- heightsPosInc$height * 2.72
+library(tidyverse)
+library(knitr)
+#install.packages("ggplot2")
+library("ggplot2")
+# noen er veldig lite glad i science notation ;-)
+#options(scipen = 999)
+# jeg vil forslå 
+options(scipen = 6)
+# så fåen science notation for veldig små og veldig store tall
+# install.packages("ggpubr")
+library(ggpubr)
+```
+
+```{r pos-inc}
+heightsPosInc <- modelr::heights
+#attach(x)
+# Bruk pipes og tidyverse
+# heights_pos_inc hadde kanskje vært mer 
+# i takt med tidyverse (snake_case for objekter)
+heightsPosInc <- heightsPosInc %>% 
+  filter(income > 0) %>% 
+  mutate(
+    income_NOK = income * 10,
+    height_cm = height * 2.72
+  )
 ```
 
 ## Innledning
 
-I arbeidslivet er det mange faktorer som påvirker årslønnen til den ansatte. Ved hjelp av datasettet "heightsPosInc" skal vi i denne oppgaven undersøke om det er høyde som ene og alene har påvirkning for inntjening av lønn. Samtidig skal vi undersøke om andre variabler som alder, utdanning og sivilstatus og kjønn også påvirker årslønnen til den ansatte og måle disse variablene opp mot høyde. Vi har valgt å avgrense datasettet til de personene som har positiv inntekt (5266 av 7006 deltakende i datsettet, derav datasettet "heightsPosInc" fremfor "heights"). Grunnet stort utvalg av respondenter til dette datasettet, bør disse dataene være troverdig iforhold til realiteten
+I arbeidslivet er det mange faktorer som påvirker årslønnen til den ansatte.\nVed hjelp av datasettet "heightsPosInc" skal vi i denne oppgaven undersøke om det er høyde som ene og alene har påvirkning for inntjening av lønn.
+Samtidig skal vi undersøke om andre variabler som alder, utdanning og sivilstatus og kjønn også påvirker årslønnen til den ansatte og måle disse variablene opp mot høyde.
+Vi har valgt å avgrense datasettet til de personene som har positiv inntekt (5266 av 7006 deltakende i datsettet, derav datasettet "heightsPosInc" fremfor "heights").
+Grunnet stort utvalg av respondenter til dette datasettet, bør disse dataene være troverdig iforhold til realiteten
 
-
-I datasettet ser vi tydelig at de personene som er høyere tjener bedre enn de som er lavere. Ved hjelp av oppgavesettet skal vi gjennomføre ulike plot både på envariabel analyse for å kartlegge inntekten i forhold til høyden, samt på tovariabel analyse for å finne ut om det faktisk er høyde som utgjør inntektsforskjellen på de ansatte, eller om det er andre faktorer som utgjør at lønnen er høyere til de høye personene. 
-
+I datasettet ser vi tydelig at de personene som er høyere tjener bedre enn de som er lavere.
+Ved hjelp av oppgavesettet skal vi gjennomføre ulike plot både på envariabel analyse for å kartlegge inntekten i forhold til høyden, samt på tovariabel analyse for å finne ut om det faktisk er høyde som utgjør inntektsforskjellen på de ansatte, eller om det er andre faktorer som utgjør at lønnen er høyere til de høye personene. 
 
 ## Deskriptiv statistikk alder, utdanning, inntekt og høyde.
 
 ```{r}
-library("knitr")
-
-kable(summary(heightsPosInc[c(4,7, 9:10)]))
+# rewritten in the tidyverse way
+heightsPosInc %>% 
+  select(age, education, income_NOK, height_cm) %>% 
+  summary() 
+# slå på kable til slutt. kable output "lugger" 
+# ved scrolling i .Rmd dokumenter 
+#%>%   kable()
 ```
-Ved hjelp av denne datakoden får vi blant annet opp den deskriptive statistikken for høyde i datasettet heightsPosInc. Gjennomsnittet for dette utvalget på deltakende personer er 183,1 cm. Ut ifra tallene for alder ser vi at de som er inkludert i dette datasettet er personer mellom 47 og 56 år og gjennomsnittsalderen for disse er 51,28 år. Det vil si at de fleste som er deltakende i datasettet er personer som er ferdig med utdanning. Videre ser vi at gjennomsnittet for antall år utdanning er rett i overkant av 13,5 år. Gjennomsnittslønnen er dernest i underkant av 550 000kr.
 
+Ved hjelp av denne datakoden får vi blant annet opp den deskriptive statistikken for høyde i datasettet heightsPosInc.
+Gjennomsnittet for dette utvalget på deltakende personer er 183,1 cm.
+Ut ifra tallene for alder ser vi at de som er inkludert i dette datasettet er personer mellom 47 og 56 år og gjennomsnittsalderen for disse er 51,28 år.
+Det vil si at de fleste som er deltakende i datasettet er personer som er ferdig med utdanning.
+Videre ser vi at gjennomsnittet for antall år utdanning er rett i overkant av 13,5 år.
+Gjennomsnittslønnen er dernest i underkant av 550 000kr.
 
 # Analyse og plots
 
 ## En variabel - analyse
-I oppgave 1 skal vi foreta èn variabel analyse. Da har vi valgt å kikke på variablene høyde og inntekt hver for seg på grunn av dette var mest relevant for oppgaven. For disse 2 variablene skal vi lage et histogram, et density plot og et boxplot for å se om observasjonene er normalfordelte eller ikke.
 
+I oppgave 1 skal vi foreta èn variabel analyse.
+Da har vi valgt å kikke på variablene høyde og inntekt hver for seg på grunn av dette var mest relevant for oppgaven.
+For disse 2 variablene skal vi lage et histogram, et density plot og et boxplot for å se om observasjonene er normalfordelte eller ikke.
 
 ```{r echo=TRUE}
-#install.packages("ggplot2")
-library("ggplot2")
-ggplot(heightsPosInc, mapping = aes(x = cm, y = income))+geom_point(colour = "darkseagreen4") +
+# bruke pipes og tidyverse. 
+# Gir det noen informasjon å la punktene være mørkegrønne?
+# Foreslår å redusere size på punktene og også alpha for
+# å bedre se hvor det er mange observasjoner
+heightsPosInc %>% 
+ggplot(mapping = aes(x = height_cm, y = income)) +
+  geom_point(size = 0.7, alpha = 0.1) +
   xlab("Høyde i cm") + 
   ylab("Inntekt") + 
   ggtitle("Inntekt basert på høyde")
-
 ```
 
-De grønne prikkene som er øverst på rekken i geom_point plottet er outlayers. Det vil si at disse observasjonene skiller seg veldig i fra de observasjonene som er normalfordelte. Et eksempel på outlayers kan være når de fleste tjener mellom 400 000 og 800 000 NOK, men så er det noen som tjener over 2 millioner kroner. Dette er et typisk ekspemel på outlayers og på en graf så er det disse observasjonene som ligger lengst ifra de andre observasjonene, og i dette tilfellet øverst.
+De grønne prikkene som er øverst på rekken i geom_point plottet er utliggere.
+Det vil si at disse observasjonene skiller seg veldig i fra de observasjonene som er normalfordelte.
+Et eksempel på outlayers kan være når de fleste tjener mellom 400 000 og 800 000 NOK, men så er det noen som tjener over 2 millioner kroner.
+Dette er et typisk ekspemel på utliggere og på en graf så er det disse observasjonene som ligger lengst ifra de andre observasjonene, og i dette tilfellet øverst.
 
 ```{r}
-ggplot(data = heightsPosInc) + 
-  geom_bar(mapping = aes(x = cm, fill = sex ), position = "dodge") + 
+# Dette er en god figur med mye informasjonsverdi
+heightsPosInc %>% 
+  ggplot() + 
+  geom_bar(mapping = aes(x = height_cm, fill = sex ), 
+           position = "dodge") + 
   xlab("Høyde i cm") + 
   ylab("Antall") + 
   ggtitle("Høydefordeling menn og kvinner")
 ```
 
-Denne grafen viser høydefordelingen mellom mennene og kvinnene i datasettet. Vi ser tydelig her at fordelingen er normalfordelt, og en kan også se at høyden for menn i gjennomsnitt er høyere enn for kvinner.
+Denne grafen viser høydefordelingen mellom mennene og kvinnene i datasettet.
+Vi ser tydelig her at fordelingen er normalfordelt, og en kan også se at høyden for menn i gjennomsnitt er høyere enn for kvinner.
 
 ```{r}
-hist(heightsPosInc$cm, main = "Histogram høyde", xlab = "Høyde i cm", ylab = "Antall", col = "darkseagreen4")
+# skrevte om til pipes og tidyverse
+# Vil anbefale å bruke default colour så lenge
+# farge ikke har noen informasjonsverdi
+# Har gjort om til frekvens. Ta bort ", y = ..density.."
+# hvis dere heller vil ha antall
+heightsPosInc %>% 
+  ggplot(mapping = aes(x = height_cm, y = ..density..)) +
+  geom_histogram(binwidth = 2.72) + 
+  ggtitle("Histogram høyde") + 
+  xlab("Høyde i cm") +
+  ylab("Antall")
 ```
 
-Ved å lage et histogram av høyde ser vi at observasjonene i datasettet "heightsPosInc" er normalfordelte.
-
+Ved å lage et histogram av høyde ser vi at observasjonene i datasettet "heightsPosInc" er tilnærmet normalfordelte.
 
 ```{r}
-hist(heightsPosInc$NOK, main = "Histogram Inntekt", xlab = "Inntekt i NOK", ylab = "Antall", col = "darkseagreen4")
+# skrevte om til pipes og tidyverse
+# Vil anbefale å bruke default colour så lenge
+# farge ikke har noen informasjonsverdi
+heightsPosInc %>% 
+  ggplot(mapping = aes(x = income_NOK)) +
+  geom_histogram(binwidth = 50000) +
+  ggtitle("Histogram Inntekt") +
+  xlab("Inntekt i NOK") +
+  ylab("Antall")
 ```
 
-Det er motsatt tilfelle for histogram for inntekt. Her er fordelingen ikke normalfordelt og i dette tilfellet vil vi forsøke å gjennomføre en transformasjon gjennom å ta i bruk logaritmen til inntekt. 
+
+Det er motsatt tilfelle for histogram for inntekt.
+Her kan fordelingen vanskelig sies å være normalfordelt og i dette tilfellet vil vi forsøke å gjennomføre en transformasjon gjennom å ta i bruk logaritmen til inntekt. 
 
 ```{r}
-heightsPosInc$logNOK <- log(heightsPosInc$NOK)
-hist(heightsPosInc$logNOK, main = "Histogram transformert inntekt (log inntekt)", xlab = "Log Income", ylab = "Antall", col = "darkseagreen4")
+# Hvis en tror at en trenger den log-transformerte
+# variabelen senere kan en legge den til dataframen,
+# ellers er R istand til å gjøre transformasjonene
+# "on the fly". Det siste reduserer "clutter"
+heightsPosInc %>% 
+  ggplot(mapping = aes(x = log(income_NOK))) +
+  geom_histogram(binwidth = 0.25) +
+  ggtitle("Histogram Inntekt") +
+  xlab("ln() til inntekt i NOK") +
+  ylab("Frekvens")
+```
+
+I eksempelet ovenfor har vi foretatt en transformasjon og grafen er nå blitt tilnærmet normalfordelt, men ytterst til høyre har vi en utligger.
+
+```{r}
+# skrevet om til tidyverse og pipes
+# jeg liker godt gjennomsiktighet på fill, men
+# en smakssak. Har en flere densities i samme figur
+# er gjennomsiktighet en fordel
+heightsPosInc %>% 
+  ggplot(mapping = aes(x = height_cm)) +
+  geom_density(alpha = 0.3, colour = "green4", fill = "green4") +
+  ggtitle("Density plot høyde") +
+  xlab("Høyde i cm") + 
+  ylab("Andel")
+```
+
+I likhet med histogram for høyde så gir også density plot for høyde et bilde av at grafen er normalfordelt.
+Det vil si at flesteparten av observasjonene er sentrert rundt 170-190 cm.
+
+```{r}
+# skrevet om til tidyverse og pipes
+# jeg liker godt gjennomsiktighet på fill, men
+# en smakssak. Har en flere densities i samme figur
+# er gjennomsiktighet en fordel
+heightsPosInc %>% 
+  ggplot(mapping = aes(x = income_NOK)) +
+  geom_density(alpha = 0.3, colour = "green4", fill = "green4") +
+  ggtitle("Density plot inntekt") +
+  xlab("Inntekt i NOK") + 
+  ylab("Andel")
+```
+
+I likhet med histogram for inntekt så gir også density plot for inntekt et bilde av grafen ikke er normalfordelt.
+Vi vurderer også i dette tilfellet slik at en transformasjon er på plass.
+
+```{r}
+heightsPosInc %>% 
+  ggplot(mapping = aes(x = log(income_NOK))) +
+  geom_density(alpha = 0.3, colour = "green4", fill = "green4") +
+  ggtitle("Density plot transformert inntekt") +
+  xlab("Log inntekt i NOK") + 
+  ylab("Andel")
 ```
 
 I eksempelet ovenfor har vi foretatt en transformasjon og grafen er nå blitt tilnærmet normalfordelt, men ytterst til høyre har vi en outlayer.
 
 ```{r}
-plot(density(heightsPosInc$cm), main = "Density plot høyde", xlab = "Høyde i cm", ylab = "Andel")
-```
+heights_under1000000 <- subset(heightsPosInc, income_NOK < 1000000)
 
-I likhet med histogram for høyde så gir også density plot for høyde et bilde av at grafen er normalfordelt. Det vil si at flesteparten av observasjonene er sentrert rundt 170-190 cm.
-
-```{r}
-plot(density(heightsPosInc$NOK), main = "Density plot inntekt", xlab = "Inntekt i NOK", ylab = "Andel", col = "green4")
-```
-
-I likhet med histogram for inntekt så gir også density plot for inntekt et bilde av grafen ikke er normalfordelt. Vi vurderer også i dette tilfellet slik at en transformasjon er på plass.
-
-```{r}
-plot(density(heightsPosInc$logNOK), main = "Density plot transformert inntekt", xlab = "Log inntekt", ylab = "Andel", col = "green4")
-
-```
-
-I eksempelet ovenfor har vi foretatt en transformasjon og grafen er nå blitt tilnærmet normalfordelt, men ytterst til høyre har vi en outlayer.
-
-```{r}
-heights_under1000000 <- subset(heightsPosInc, NOK < 1000000)
-
-heights_under1000000$cmInt <- cut(heights_under1000000$cm, breaks = 7)
+heights_under1000000$cmInt <- cut(heights_under1000000$height_cm, breaks = 7)
 ggplot(heights_under1000000, mapping =aes(x = cmInt, y = income, fill= cmInt))+
 geom_boxplot(col = "darkseagreen4")
 ```
 
-På boxplot har vi tatt høydeintervall i forhold til inntekt. Vi har valgt å avgrense inntekten til maksimalt kr. 1 000 000 på dette plotet for å unngå outlayers som gjør at grafen blir mindre oversiktlig. 
+På boxplot har vi tatt høydeintervall i forhold til inntekt.
+Vi har valgt å avgrense inntekten til maksimalt kr. 1 000 000 på dette plotet for å unngå outlayers som gjør at grafen blir mindre oversiktlig. 
 
 ```{r}
-ggplot(heightsPosInc, mapping = aes(x = cm, y = NOK)) + 
-  geom_point(position = "jitter", colour = "darkseagreen4") +
+# omskrevet til pipes. Igjen ved å redusere size og
+# alpha ser en lettere hvor det er flest observasjoner
+heightsPosInc %>% 
+ggplot(mapping = aes(x = height_cm, y = income_NOK)) + 
+  geom_point(position = "jitter",
+             colour = "darkseagreen4",
+             size = .5,
+             alpha = .2) +
   geom_smooth(method = "lm") +
-  geom_smooth(method = MASS::rlm, colour = "firebrick3", se = TRUE) +
+  geom_smooth(method = MASS::rlm, 
+              colour = "firebrick3", 
+              se = TRUE) +
   xlab("Høyde i cm") + 
   ylab("Inntekt i NOK") + 
   ggtitle("Inntekt basert på høyde")
 ```
 
-Ettersom vi ser på observasjoner med inntekt over 0, vil det være hensiktsmessig å se nærmere på sammenhengen mellom høyde og inntekt i form av å se på regresjonslinjen. Den blå regresjonslinjen gjelder her for alle datapunktene, mens den røde regresjonslinjen tar hensyn til at det eksisterer såkalte ekstreme observasjoner. Dette er observasjoner som potensielt kan ødelegge tolkninger av datasett da de kan "dra" regresjonslinja i ene eller andre retningen. Ved hjelp av robust lineær regresjon utelates disse observasjonene, og i dette tilfellet gjør det at helningen på kurven blir mindre. Med andre ord får høyde en mindre betydning for inntekt om en ser bort fra disse observasjonene. 
+Ettersom vi ser på observasjoner med inntekt over 0, vil det være hensiktsmessig å se nærmere på sammenhengen mellom høyde og inntekt i form av å se på regresjonslinjen.
+Den blå regresjonslinjen gjelder her for alle datapunktene, mens den røde regresjonslinjen tar hensyn til at det eksisterer såkalte ekstreme observasjoner.
+Dette er observasjoner som potensielt kan ødelegge tolkninger av datasett da de kan "dra" regresjonslinja i ene eller andre retningen.
+Ved hjelp av robust lineær regresjon utelates disse observasjonene, og i dette tilfellet gjør det at helningen på kurven blir mindre.
+Med andre ord får høyde en mindre betydning for inntekt om en ser bort fra disse observasjonene. 
 
 ## Flere variabler - analyse
 
 Det første som kan være interessant å undersøke er om det ser ut til å være en forskjell mellom menn og kvinner. 
 
 ```{r}
-(plot1 <- ggplot(data = heightsPosInc, mapping = aes(x = cm, y = NOK, colour = sex)) +
-  geom_point() +
+# Igjen, jeg ville gått for en pipe. Jiiter , size og 
+# alpha er kanskje overkill på punktene, men jeg sysnes 
+# det får frem hvor observasjonene er. Tar legend under
+# siden vi siden skal ha to ved siden av hverandre
+plot1 <- heightsPosInc %>% 
+  ggplot(mapping = aes(x = height_cm, 
+                       y = income_NOK, 
+                       colour = sex)) +
+  geom_point(position = "jitter", size = .5, alpha = .2) +
   geom_smooth(method = "lm", se = TRUE) +
   xlab("Høyde i cm") + 
-  ylab("Inntekt i NOK"))
+  ylab("Inntekt i NOK") +
+  theme(legend.position = "bottom")
+plot1
 ```
 
-I plottet over ser vi et visuelt bilde av hvordan høyde kan være med på å forklare inntekt gitt om en er mann eller kvinne. Fargen rosa viser her til observasjonene av menn, mens de lyseblå er kvinner. Den rosa regresjonslinja er her regresjonslinjen for menn og den lyseblå for kvinner. Som man kan se er linja brattere for mennene enn kvinnene, noe som peker i retning for at høyden har mer å si for menn med tanke på inntekt enn for kvinner.
+I plottet over ser vi et visuelt bilde av hvordan høyde kan være med på å forklare inntekt gitt om en er mann eller kvinne.
+Fargen rosa viser her til observasjonene av menn, mens de lyseblå er kvinner.
+Den rosa regresjonslinja er her regresjonslinjen for menn og den lyseblå for kvinner.
+Som man kan se er linja brattere for mennene enn kvinnene, noe som peker i retning for at høyden har mer å si for menn med tanke på inntekt enn for kvinner.
 
 ```{r}
-(plot2 <- ggplot(data = heightsPosInc, mapping = aes(x = cm, y = NOK, colour = sex)) +
-  geom_point() +
-  geom_smooth(method = MASS::rlm, se = TRUE) + 
+# endret mass til MASS som pakken heter hos meg
+plot2 <- heightsPosInc %>% 
+  ggplot(mapping = aes(x = height_cm, 
+                       y = income_NOK, 
+                       colour = sex)) +
+  geom_point(position = "jitter", size = .5, alpha = .2) +
+  geom_smooth(method = MASS::rlm, se = TRUE) +
   xlab("Høyde i cm") + 
-  ylab("Inntekt i NOK"))
+  ylab("Inntekt i NOK") +
+  theme(legend.position = "bottom")
+plot2
 ```
 
-Likevel er det her ikke tatt hensyn til at ekstreme observasjoner i datasettet kan spille inn på resultatene også her. I plot 2 er det tatt høyde for ekstreme observasjoner for å kunne få en mer riktigere bilde på helning på kurven, noe som vil si at de ekstreme observasjonene ikke er med i utregningen. Dette har vi valgt å fremstille visuelt for å kunne illustrere hvilken betydning dette har på helningen til regresjonslinja. 
+Likevel er det her ikke tatt hensyn til at ekstreme observasjoner i datasettet kan spille inn på resultatene også her.
+I plot 2 er det tatt høyde for ekstreme observasjoner for å kunne få en mer riktigere bilde på helning på kurven, noe som vil si at de ekstreme observasjonene ikke er med i utregningen.
+Dette har vi valgt å fremstille visuelt for å kunne illustrere hvilken betydning dette har på helningen til regresjonslinja. 
 
-Under følger en oversikt over begge plottene. Spesielt linja for menn endrer seg ved å utelate de ekstreme observasjonene. Dette gir mening ved å se på de rosa observasjonene øverst i høyre hjørne på plottene.   
+Under følger en oversikt over begge plottene.
+Spesielt linja for menn endrer seg ved å utelate de ekstreme observasjonene.
+Dette gir mening ved å se på de rosa observasjonene øverst i høyre hjørne på plottene.
+  
 ```{r}
-# install.packages("ggpubr")
-library(ggpubr)
-ggarrange(plot1, plot2, ncol = 2, nrow = 1, labels = c("Med ekstrempunkt", "Uten ekstrempunkt")) 
+# flyttet library() til setup på toppen
+ggarrange(plot1, plot2, ncol = 2, nrow = 1, labels = c("Med ekstrempunkt", "Uten ekstrempunkt"), vjust = 3, hjust = -0.48)
 ```
 
-For å fremvise andre varibler visuelt, gjennom bruk av for eksempel shape eller colour, fant vi det ikke tilstrekkelig nyttig å gjøre dette på grunn av det store antallet observasjoner. Det visuelle bildet vil da være for sammensatt og vi mener at en som leser ikke enkelt kan hente ut noe nyttig informasjon fra plottene.
+For å fremvise andre varibler visuelt, gjennom bruk av for eksempel shape eller colour, fant vi det ikke tilstrekkelig nyttig å gjøre dette på grunn av det store antallet observasjoner.
+Det visuelle bildet vil da være for sammensatt og vi mener at en som leser ikke enkelt kan hente ut noe nyttig informasjon fra plottene.
 
 Det er likevel et men her, da vi kan utvide vår forståelse gjennom bruk av facetter.
 
@@ -169,11 +301,19 @@ Det er likevel et men her, da vi kan utvide vår forståelse gjennom bruk av fac
 
 Facetter kan uten tvil være nyttig for analyseformål og for å gi oss mer innsikt om dataene vi har. 
 
-Det første vi har valgt å se på er utdanning. Jo lysere blåfarge på punktet, jo mer utdanning. Dette gir  oss også den innsikt av at det ser ut som at det eksisterer en tendens for at de med lavere utdanning har lavere lønn. Samtidig er en facet-inndeling i forhold til kjønn godt egnet for å sammenligne menn og kvinner. Dette gjør at vi kan fremstille høyde og utdannings betydning for inntekt både for menn og kvinner.  
+Det første vi har valgt å se på er utdanning.
+Jo lysere blåfarge på punktet, jo mer utdanning.
+Dette gir  oss også den innsikt av at det ser ut som at det eksisterer en tendens for at de med lavere utdanning har lavere lønn.
+Samtidig er en facet-inndeling i forhold til kjønn godt egnet for å sammenligne menn og kvinner.
+Dette gjør at vi kan fremstille høyde og utdannings betydning for inntekt både for menn og kvinner.  
 
 ```{r}
-ggplot(heightsPosInc, mapping = aes(x = cm, y = NOK, colour = education)) + 
-  geom_point(position = "jitter") +
+# Igjen, jeg synes bruk av size og alpha gir et bedre 
+# bilde av hvor observasjonene ligger
+ggplot(heightsPosInc, mapping = aes(x = height_cm, 
+                                    y = income_NOK, 
+                                    colour = education)) + 
+  geom_point(size = 0.7, alpha = 0.1) +
   geom_smooth(method = MASS::rlm) +
   facet_grid(~ sex) + 
   ylab("Inntekt i NOK") + 
@@ -184,8 +324,11 @@ ggplot(heightsPosInc, mapping = aes(x = cm, y = NOK, colour = education)) +
 Videre vil det også kunne gi utvidet forståelse av datasettet ved å dele inn etter sivilstatus. 
 
 ```{r}
-ggplot(heightsPosInc, mapping = aes(x = cm, y = NOK)) + 
-  geom_point(position = "jitter", colour = "darkseagreen4") +
+ggplot(heightsPosInc, mapping = aes(x = height_cm, 
+                                    y = income_NOK)) + 
+  geom_point(colour = "darkseagreen4",
+             size = 0.5,
+             alpha = 0.1) +
   geom_smooth(method = MASS::rlm, colour = "brown") +
   facet_grid(~ marital) + 
   xlab("Høyde (140-220cm) og sivilstatus (singel etc.)") + 
@@ -193,17 +336,26 @@ ggplot(heightsPosInc, mapping = aes(x = cm, y = NOK)) +
   ggtitle("Inntekt basert på sivilstatus og høyde")
 ```
 
-Ovenfor har vi sett på om forskjeller i sivilstatus kan ha noe å si for forholdet mellom høyde og inntekt. Det later til å være slik. Som man ser virker høyde å ha mer å si for inntekt dersom man er gift, enn for blant annet single. Dette på grunn av helningen på kurven er brattere for gifte enn single.
+Ovenfor har vi sett på om forskjeller i sivilstatus kan ha noe å si for forholdet mellom høyde og inntekt.
+Det later til å være slik.
+Som man ser virker høyde å ha mer å si for inntekt dersom man er gift, enn for blant annet single.
+Dette på grunn av helningen på kurven er brattere for gifte enn single.
 
 Hvorvidt utdanningsnivå har noe å si for hvordan høyde henger sammen med inntekt, er også noe som kan være relevant å undersøke. 
 
 ```{r}
+# Er dette nødvendig? class(heightsPosInc$education)
+# sier at education er integer
 heightsPosInc$educationNum <- as.numeric(heightsPosInc$education)
+# vurder tidyverse alternativet fra ggplot2, cut_interval()
+# eller cut_width(). Setter breaks ved 
+# oppnådd utdannelsesnivå. Jeg prøver å konvertere 
+# bort fra cut;-)
 
 heightsPosInc$educationInt <- cut(heightsPosInc$educationNum, breaks = 6)
 
-ggplot(heightsPosInc, mapping = aes(x = cm, y = NOK)) + 
-  geom_point(position = "jitter", colour = "darkseagreen4") +
+ggplot(heightsPosInc, mapping = aes(x = height_cm, y = income_NOK)) + 
+  geom_point(size = 0.5, alpha = 0.2, colour = "darkseagreen4") +
   geom_smooth(method = MASS::rlm, colour = "brown") +
   facet_grid(~ educationInt) + 
    xlab("Høyde (140-220cm) og utdanningsnivå (0.981 - 20) ") + 
@@ -211,26 +363,64 @@ ggplot(heightsPosInc, mapping = aes(x = cm, y = NOK)) +
   ggtitle("Inntektsfordeling basert på utdanningsnivå og høyde")
 ```
 
-Grafene ovenfor antyder at jo mer utdanning en har, jo mer virker det som at høyde har å si for inntekten. Dette på grunn av at helningen på kurven blir brattere og brattere for mer og mer utdanning. Dette kan gi mening ettersom det generelt sett er lavere sprang i inntekt for de med lavere utdanning enn for de med høy utdanning. 
+```{r}
+# samme vha tidyverse og pipe
+heightsPosInc %>% 
+  filter(!is.na(education)) %>% 
+  filter(income_NOK < 2000000) %>% 
+  mutate(
+    eduBinned = cut(education, breaks = c(0, 12, 14, 16, 22), labels = c("hs", "lc", "cu", "cg"), right = TRUE)
+  ) %>% 
+ggplot(mapping = aes(x = height_cm, y = income_NOK)) + 
+  geom_point(size = 0.5, alpha = 0.2, colour = "darkseagreen4") +
+  geom_smooth(method = MASS::rlm, colour = "brown") +
+  facet_grid(sex ~ eduBinned) + 
+   xlab("Høyde (140-220cm) og utdanningsnivå (hs:cg)") + 
+  ylab("Inntekt") + 
+  ggtitle("Inntektsfordeling basert på kjønn, utdanningsnivå og høyde")
+```
 
-
+Grafene ovenfor antyder at jo mer utdanning en har, jo mer virker det som at høyde har å si for inntekten.
+Dette på grunn av at helningen på kurven blir brattere og brattere for mer og mer utdanning.
+Dette kan gi mening ettersom det generelt sett er lavere sprang i inntekt for de med lavere utdanning enn for de med høy utdanning. 
 
 # Hvor mye tjener en per ekstra cm i høyde?
-```{r}
-summary(lm (NOK ~ cm, data = heightsPosInc))
-```
-
-Som man ser antyder regresjonsanalysen at for hver ekstra cm så er det estimert at en tjener i overkant av 12 000 kr ekstra per år. Resultatene er statistisk signifikante, selv om R-verdien ikke er særlig høy. Med andre ord forklarer ikke den estimerte modellen vår mye av inntekt og det eksisterer andre variabler som kan være med på å forklare hvor mye man har i inntekt utenom høyde.T-verdien er videre på rundt 17, og jo høyere t-verdi, jo mindre sannsynlig er det at det skyldes tilfeldigheter i utvalget. T-verdien i dette tilfellet taler for at vi kan forkaste en nullhypotese om at det ikke er sammenheng mellom høyde og inntekt.
-
-
-Det vil videre av ovennevnte grunn være aktuelt å se på andre forklaringsfaktorer slik som vi også har gjort visuelt tidligere i oppgaven. For dette formål har vi valgt å ta med de variablene som vi tidligere har brukt i oppgaven.
 
 ```{r}
-summary(lm (NOK ~ cm + marital + sex + education, data = heightsPosInc))
+#summary(lm (income_NOK ~ height_cm, data = heightsPosInc))
+# Eller
+coef(lm (income_NOK ~ height_cm, data = heightsPosInc))[2]
 ```
 
-Som man kan se av resultatene over gir en cm nå i overkant av 2300 kr mer i inntekt hvert år. Samtidig er forklaringsgraden en god del høyere med en R-verdi på ca 0.22. Modellen forklarer med andre ord mer av hva som ligger bak inntektsnivået til utvalget. Videre er t-verdien sunket, selv om vi også nå kan forkaste en nullhypotese om ingen sammenheng mellom høyde og inntekt. Videre ser vi blant annet også antydninger til utdanning. Et ekstra år utdanning gir her estimert i overkant av 86000 kroner i ekstra lønn per år . 
+Som man ser antyder regresjonsanalysen at for hver ekstra cm så er det estimert at en tjener i overkant av 12 000 kr ekstra per år.
+Resultatene er statistisk signifikante, selv om R-verdien ikke er særlig høy.
+Med andre ord forklarer ikke den estimerte modellen vår mye av inntekt og det eksisterer andre variabler som kan være med på å forklare hvor mye man har i inntekt utenom høyde.T-verdien er videre på rundt 17, og jo høyere t-verdi, jo mindre sannsynlig er det at det skyldes tilfeldigheter i utvalget.
+T-verdien i dette tilfellet taler for at vi kan forkaste en nullhypotese om at det ikke er sammenheng mellom høyde og inntekt.
+
+Det vil videre av ovennevnte grunn være aktuelt å se på andre forklaringsfaktorer slik som vi også har gjort visuelt tidligere i oppgaven.
+For dette formål har vi valgt å ta med de variablene som vi tidligere har brukt i oppgaven.
+
+```{r}
+# lm() er en av de få funksjonene som ikke har data som
+# første input. Vi må derfor angi hvor dtaene fra pipen 
+#skal komme inn vha. "."
+heightsPosInc %>% 
+  lm (formula = income_NOK ~ height_cm + marital + sex + education, data = .) %>% 
+  summary()
+#summary(lm (NOK ~ cm + marital + sex + education, data = heightsPosInc))
+```
+
+Som man kan se av resultatene over gir en cm nå i overkant av 2300 kr mer i inntekt hvert år.
+Samtidig er forklaringsgraden en god del høyere med en R-verdi på ca 0.22.
+Modellen forklarer med andre ord mer av hva som ligger bak inntektsnivået til utvalget.
+Videre er t-verdien sunket, selv om vi også nå kan forkaste en nullhypotese om ingen sammenheng mellom høyde og inntekt.
+Videre ser vi blant annet også antydninger til utdanning.
+Et ekstra år utdanning gir her estimert i overkant av 86000 kroner i ekstra lønn per år . 
 
 # Konklusjon
 
-Gjennom denne analysen har vi funnet antydninger for at høyde har en betydning på inntekt. For hver ekstra centimeter fant vi en estimert positiv nytteverdi på i overkant av 2300kr. En populær ordtolkning av dette resultatet er at du som barn burde ha spist opp grønnsakene dine! Videre fant vi også en sammenheng mellom blant annet utdanning og inntekt, der et ekstra år med utdanning gir en estimert ekstra årlig inntekt på ca. 86 000 kr. En nytolkning av den forrige tolkningen kan dermed være å investere tid i å lese bøker fremfor å spise opp grønnsakene dine som ung, selv om begge nok vil være å anbefales. Og er du relativt lav, så fortvil ikke, du kan hente inn inntektsforspranget på de som er høyere enn deg gjennom å ta en lengre utdannelse! 
+Gjennom denne analysen har vi funnet antydninger for at høyde har en betydning på inntekt.
+For hver ekstra centimeter fant vi en estimert positiv nytteverdi på i overkant av 2300kr.
+En populær ordtolkning av dette resultatet er at du som barn burde ha spist opp grønnsakene dine! Videre fant vi også en sammenheng mellom blant annet utdanning og inntekt, der et ekstra år med utdanning gir en estimert ekstra årlig inntekt på ca. 86 000 kr.
+En nytolkning av den forrige tolkningen kan dermed være å investere tid i å lese bøker fremfor å spise opp grønnsakene dine som ung, selv om begge nok vil være å anbefales.
+Og er du relativt lav, så fortvil ikke, du kan hente inn inntektsforspranget på de som er høyere enn deg gjennom å ta en lengre utdannelse! 
